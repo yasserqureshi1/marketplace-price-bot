@@ -16,7 +16,7 @@ async def market_places(ctx, *args):
     args = ' '.join(args)
 
     embed = discord.Embed(
-        title='Prices across Marketplaces',
+        title='Marketplace Comparison',
         description=f'Prices for query: "{args}"'
     )
     try:
