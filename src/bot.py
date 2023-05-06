@@ -58,9 +58,14 @@ async def market_places(ctx, *args):
         embed.add_field(name='[Depop] Average Listed Price', value='Something went wrong')
 
     try:
-        grailed_prices = Grailed(args).get_prices()
-        grailed_url = Grailed(args).get_url()
-        embed.add_field(name=f'[Grailed] Average Listed Price', value=f"[Link]({grailed_url}) ${grailed_prices['facets_stats']['price_i']['avg']}")
+        try:
+            grailed_prices = Grailed(args).get_prices()
+            grailed_url = Grailed(args).get_url()
+            embed.add_field(name=f'[Grailed] Average Listed Price', value=f"[Link]({grailed_url}) ${grailed_prices['facets_stats']['price_i']['avg']}")
+        except:
+            grailed_prices = Grailed(args).get_prices()
+            grailed_url = 'https://www.grailed.com/'
+            embed.add_field(name=f'[Grailed] Average Listed Price', value=f"[Link]({grailed_url}) ${grailed_prices['facets_stats']['price_i']['avg']}")
     except:
         print(traceback.format_exc())
         embed.add_field(name='[Grailed] Average Listed Price', value='Something went wrong')

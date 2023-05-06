@@ -98,17 +98,36 @@ class Goat:
         self.item = item.replace(' ', '%20')
 
     def get_prices(self):
-        html = requests.post(
-            url='https://2fwotdvm2o-dsn.algolia.net/1/indexes/ProductTemplateSearch/query', 
-            headers={'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0"}, 
-            params={
-                'x-algolia-agent': 'Algolia for vanilla JavaScript 3.25.1',
-                'x-algolia-api-key': 'ac96de6fef0e02bb95d433d8d5c7038a',
-                'x-algolia-application-id': '2FWOTDVM2O'
-            }, 
-            json={"params": "query={}&facetFilters=(status%3Aactive%2C%20status%3Aactive_edit)%2C%20()&page=0&hitsPerPage=20".format(self.item)}
-        )
-        return json.loads(html.text)['hits'][0]
+        try:
+            html = requests.post(
+                url='https://2fwotdvm2o-dsn.algolia.net/1/indexes/ProductTemplateSearch/query', 
+                headers={'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0"}, 
+                params={
+                    'x-algolia-agent': 'Algolia for vanilla JavaScript 3.25.1',
+                    'x-algolia-api-key': 'ac96de6fef0e02bb95d433d8d5c7038a',
+                    'x-algolia-application-id': '2FWOTDVM2O'
+                }, 
+                json={"params": "query={}&facetFilters=(status%3Aactive%2C%20status%3Aactive_edit)%2C%20()&page=0&hitsPerPage=20".format(self.item)}
+            )
+            return json.loads(html.text)['hits'][0]
+        except IndexError:
+            headers = {
+                    'accept': '*/*',
+                    'accept-encoding': 'gzip, deflate, br',
+                    'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+                    'dnt': '1',
+                    'origin': 'https://www.goat.com',
+                    'sec-fetch-dest': 'empty',
+                    'sec-fetch-mode': 'cors',
+                    'sec-fetch-site': 'cross-site',
+                    'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1'
+            }
+            url = f'https://ac.cnstrc.com/search/{self.item}?c=ciojs-client-2.27.9&key=key_XT7bjdbvjgECO5d8&i=0d562b86-f8cf-4b44-8277-ca435324260e&s=2&num_results_per_page=25&_dt=1653046311601'
+            html = requests.get(url=url, headers=headers)
+            output = json.loads(html.text)
+            return output['response']['results'][0]['data']
+        else:
+            raise Exception
 
 
 
@@ -162,11 +181,18 @@ class Grailed:
     
     def get_url(self):
         html = requests.post(
-            url='https://www.grailed.com/api/searches', 
+            url='https://www.grailed.com/api/searches',
             headers={
+                'accept': 'application/json',
+                'accept-encoding': 'gzip, deflate, br',
+                'accept-language': 'en-GB,en-US;q=0.9,en;q=0.8',
+                'content-type': 'application/json',
+                'sec-fetch-dest': 'empty',
+                'sec-fetch-mode': 'cors',
+                'sec-fetch-site': 'same-origin',
                 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36',
+                'x-amplitude-id': '1683378837634'
             }, 
             json={"index_name":"Listing_sold_production","query":self.raw_query,"filters":{}}
         )
         return 'https://www.grailed.com/shop/' + json.loads(html.text)['data']['uuid']
-
