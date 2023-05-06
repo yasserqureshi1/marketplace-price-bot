@@ -1,4 +1,4 @@
-# Marketplace Compare Tool 
+# Marketplace Price Bot
 
 ## About this Project
 
